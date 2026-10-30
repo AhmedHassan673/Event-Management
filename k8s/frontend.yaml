@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/YOUR_GITHUB_USER/visiospark-frontend:latest
+          image: ghcr.io/ahmedhassan673/visiospark-frontend:latest
           ports: [{ containerPort: 8080 }]
           readinessProbe: { httpGet: { path: /, port: 8080 }, periodSeconds: 10 }
           resources:
