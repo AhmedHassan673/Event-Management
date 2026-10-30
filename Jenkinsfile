@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     environment {
         GH_CREDS = credentials('github-registry-credentials')
         REGISTRY = 'ghcr.io'
@@ -8,18 +8,12 @@ pipeline {
     }
 
     stages {
-        stage('Checkout Code') {
-            steps {
-                git branch: 'main', url: 'https://github.com/AhmedHassan673/VISIOSPARK.git'
-            }
-        }
-
         stage('Build & Push Docker Images to GHCR') {
             steps {
                 script {
                     // Log in to GitHub Container Registry
                     sh "echo ${GH_CREDS_PSW} | docker login ghcr.io -u ${GH_CREDS_USR} --password-stdin"
-                    
+
                     // Build & Push Backend
                     appBackend = docker.build("${REGISTRY}/${IMAGE_NAMESPACE}-backend:latest", "./backend")
                     appBackend.push()
@@ -44,7 +38,7 @@ pipeline {
             }
         }
     }
-    
+
     post {
         success {
             echo 'Pipeline executed successfully, images pushed to GHCR and deployed to Minikube!'
