@@ -1,0 +1,91 @@
+name: CI/CD
+
+on:
+  push: { branches: [main] }
+  pull_request: { branches: [main] }
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install
+        working-directory: backend
+      - run: npm run lint
+        working-directory: backend
+      - name: Validate Kubernetes manifests
+        run: |
+          kubectl kustomize k8s > /dev/null
+      - name: Build images (no push)
+        run: |
+          docker build backend
+          docker build frontend
+
+  build-and-push:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions: { contents: read, packages: write }
+    outputs:
+      owner: ${{ steps.owner.outputs.lower }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: owner
+        run: echo "lower=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: backend
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.owner.outputs.lower }}/visiospark-backend:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ steps.owner.outputs.lower }}/visiospark-backend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.owner.outputs.lower }}/visiospark-frontend:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ steps.owner.outputs.lower }}/visiospark-frontend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+      - name: Set image references
+        run: |
+          OWNER=${{ needs.build-and-push.outputs.owner }}
+          sed -i "s|ghcr.io/YOUR_GITHUB_USER/visiospark-backend:latest|ghcr.io/$OWNER/visiospark-backend:${{ github.sha }}|" k8s/backend.yaml
+          sed -i "s|ghcr.io/YOUR_GITHUB_USER/visiospark-frontend:latest|ghcr.io/$OWNER/visiospark-frontend:${{ github.sha }}|" k8s/frontend.yaml
+      - name: Deploy
+        run: |
+          kubectl apply -f k8s/namespace.yaml
+          kubectl -n visiospark create secret generic visiospark-secrets \
+            --from-literal=DB_PASSWORD='${{ secrets.DB_PASSWORD }}' \
+            --from-literal=ADMIN_KEY='${{ secrets.ADMIN_KEY }}' \
+            --dry-run=client -o yaml | kubectl apply -f -
+          # If your cluster pulls private images, also create an imagePullSecret for ghcr.io
+          kubectl apply -k k8s
+          kubectl -n visiospark rollout status deployment/backend --timeout=180s
+          kubectl -n visiospark rollout status deployment/frontend --timeout=180s

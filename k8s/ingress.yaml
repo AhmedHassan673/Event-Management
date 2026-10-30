@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: visiospark
+  namespace: visiospark
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 1m
+    # cert-manager.io/cluster-issuer: letsencrypt   # enable for HTTPS
+spec:
+  ingressClassName: nginx
+  # tls: [{ hosts: [visiospark.example.com], secretName: visiospark-tls }]
+  rules:
+    - host: visiospark.example.com
+      http:
+        paths:
+          - { path: /, pathType: Prefix, backend: { service: { name: frontend, port: { number: 80 } } } }

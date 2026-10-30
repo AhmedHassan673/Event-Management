@@ -1,0 +1,39 @@
+:root{--paper:#F6F7FB;--ink:#14183B;--blue:#1F4FD8;--spark:#FFC93C;--coral:#FF5A4E;--muted:#5B6085;--line:#DADDEF}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 "DM Sans",system-ui,sans-serif}
+h1,h2,h3,.brand{font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.1}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:1rem clamp(1rem,5vw,4rem)}
+.brand{font-weight:800;font-size:1.4rem;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:.5rem}
+.spark{width:1.1rem;height:1.1rem;background:var(--spark);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);animation:pulse 2.4s ease-out 1}
+@keyframes pulse{0%{transform:scale(.2) rotate(-90deg)}100%{transform:none}}
+nav{display:flex;gap:1.5rem;align-items:center}
+nav a,.link{color:var(--ink);text-decoration:none;font:inherit;background:none;border:0;cursor:pointer;font-weight:500}
+.hero{padding:clamp(3rem,10vw,7rem) clamp(1rem,5vw,4rem);max-width:60rem}
+.hero h1{font-size:clamp(2.2rem,6vw,4.6rem);font-weight:800;margin:0 0 1.2rem;letter-spacing:-.02em}
+.hero p{max-width:38rem;color:var(--muted);font-size:1.15rem;margin:0 0 2rem}
+.btn{display:inline-block;background:var(--ink);color:#fff;border:2px solid var(--ink);padding:.7rem 1.3rem;border-radius:.4rem;font:500 1rem "DM Sans";cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--blue);border-color:var(--blue)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+main{padding:0 clamp(1rem,5vw,4rem) 4rem}
+main h2{font-size:2rem;margin:0 0 1.5rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:1.5rem}
+.card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--spark);padding:1.4rem;display:flex;flex-direction:column;gap:.6rem}
+.card h3{margin:0;font-size:1.35rem}
+.card p{margin:0;color:var(--muted)}
+.meta{font-weight:500;font-size:.92rem}
+.seats{font-size:.88rem;color:var(--blue);font-weight:700}
+.seats.full{color:var(--coral)}
+.card .btn{margin-top:auto;align-self:flex-start}
+.empty{color:var(--muted)}
+dialog{border:0;border-radius:.6rem;padding:1.6rem;width:min(28rem,92vw);box-shadow:0 20px 60px rgba(20,24,59,.3)}
+dialog::backdrop{background:rgba(20,24,59,.55)}
+dialog h3{margin:0 0 1rem;font-size:1.4rem}
+label{display:block;font-weight:500;font-size:.92rem;margin-bottom:.8rem}
+input,textarea{display:block;width:100%;margin-top:.25rem;padding:.6rem;border:1px solid var(--line);border-radius:.3rem;font:inherit}
+.row{display:flex;gap:.7rem;justify-content:flex-end;margin-top:1rem}
+.msg{min-height:1.4rem;margin:.2rem 0;font-weight:500}.msg.err{color:var(--coral)}.msg.ok{color:#14803c}
+footer{border-top:1px solid var(--line);padding:1.5rem clamp(1rem,5vw,4rem);color:var(--muted);font-size:.9rem}
+@media (prefers-reduced-motion:reduce){.spark{animation:none}html{scroll-behavior:auto}}

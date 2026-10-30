@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VisioSpark · COMSATS Wah Events</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/"><span class="spark" aria-hidden="true"></span>VisioSpark</a>
+  <nav><a href="#events">Events</a><button id="adminBtn" class="link">Organizer</button></nav>
+</header>
+
+<section class="hero">
+  <h1>Ideas start small. <br>Campus events make them catch.</h1>
+  <p>Workshops, hackathons and talks hosted by VisioSpark at COMSATS University Islamabad, Wah Campus. Pick an event and save your seat.</p>
+  <a class="btn" href="#events">See upcoming events</a>
+</section>
+
+<main id="events">
+  <h2>Upcoming events</h2>
+  <div id="list" class="grid" aria-live="polite"></div>
+</main>
+
+<dialog id="regDialog">
+  <form id="regForm" method="dialog">
+    <h3 id="regTitle"></h3>
+    <label>Full name<input name="name" required></label>
+    <label>Email<input name="email" type="email" required></label>
+    <label>Registration number (optional)<input name="reg_no" placeholder="FA22-BCS-001"></label>
+    <p id="regMsg" class="msg" role="status"></p>
+    <div class="row"><button type="button" class="btn ghost" id="regCancel">Cancel</button><button class="btn" id="regSubmit">Save my seat</button></div>
+  </form>
+</dialog>
+
+<dialog id="adminDialog">
+  <form id="adminForm" method="dialog">
+    <h3>Organizer panel</h3>
+    <label>Admin key<input name="key" type="password" required></label>
+    <label>Title<input name="title" required></label>
+    <label>Description<textarea name="description" rows="3"></textarea></label>
+    <label>Venue<input name="venue" required></label>
+    <label>Date and time<input name="starts_at" type="datetime-local" required></label>
+    <label>Capacity<input name="capacity" type="number" min="1" value="100"></label>
+    <p id="adminMsg" class="msg" role="status"></p>
+    <div class="row"><button type="button" class="btn ghost" id="adminCancel">Close</button><button class="btn">Publish event</button></div>
+  </form>
+</dialog>
+
+<footer>VisioSpark · COMSATS University Islamabad, Wah Campus</footer>
+<script src="app.js"></script>
+</body>
+</html>

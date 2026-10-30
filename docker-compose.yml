@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment: { POSTGRES_USER: visiospark, POSTGRES_PASSWORD: devpassword, POSTGRES_DB: visiospark }
+    volumes: [dbdata:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U visiospark"], interval: 5s, retries: 10 }
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgres://visiospark:devpassword@db:5432/visiospark
+      ADMIN_KEY: dev-admin-key
+    depends_on: { db: { condition: service_healthy } }
+  frontend:
+    build: ./frontend
+    ports: ["8080:8080"]
+    depends_on: [backend]
+volumes:
+  dbdata:
