@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ghcr.io/YOUR_GITHUB_USER/visiospark-backend:latest
+          image: ghcr.io/ahmedhassan673/visiospark-backend:latest
           ports: [{ containerPort: 3000 }]
           env:
             - name: DB_PASSWORD
